@@ -21,20 +21,22 @@ import (
 
 func verifyjpeg(f []string) {
 	for _, file := range f {
-		imgFile, err := os.Open(file)
+		imgfile, err := os.Open(file)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		defer imgFile.Close()
-		ctype, err := GetFileContentType(imgFile)
+		defer imgfile.Close()
+		contentType, err := getFileContentType(imgfile)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		if ctype == "image/jpeg" {
-			fmt.Println(file, " true")
+		if contentType != "image/jpeg" || contentType != "image/png" {
+			fmt.Println("invalid image format ", contentType, " of file ", file)
+		} else {
+			fmt.Println("false")
 		}
-
+		fmt.Println(contentType)
 	}
 }
