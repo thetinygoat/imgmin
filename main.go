@@ -23,8 +23,11 @@ import (
 
 func main() {
 	dir := getPwd()
-	fileList := genFileSlice(dir)
-	verifyjpeg(fileList)
+	jpegList, _ := genFileSlice(dir)
+	willProceed := verifyJpeg(jpegList)
+	if willProceed {
+		minifyJpeg(50, jpegList, dir)
+	}
 }
 
 func getPwd() string {
@@ -37,22 +40,26 @@ func getPwd() string {
 	return pwd
 }
 
-func genFileSlice(d string) []string {
+func genFileSlice(d string) ([]string, []string) {
 	files, err := ioutil.ReadDir(d)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	var filelist []string
+	var jpegSlice []string
+	var pngSlice []string
 
 	for _, f := range files {
 
 		fileExt := filepath.Ext(f.Name())
-		if fileExt == ".jpg" || fileExt == ".jpeg" || fileExt == ".png" {
-			filelist = append(filelist, f.Name())
+		switch fileExt {
+		case ".jpg", ".jpeg":
+			jpegSlice = append(jpegSlice, f.Name())
+		case ".png":
+			pngSlice = append(pngSlice, f.Name())
 		}
 	}
 
-	return filelist
+	return jpegSlice, pngSlice
 }
