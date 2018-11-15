@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 )
 
 func main() {
@@ -46,7 +47,12 @@ func genFileSlice(d string) []string {
 	var filelist []string
 
 	for _, f := range files {
-		filelist = append(filelist, f.Name())
+
+		fileExt := filepath.Ext(f.Name())
+		if fileExt == ".jpg" || fileExt == ".jpeg" || fileExt == ".png" {
+			filelist = append(filelist, f.Name())
+		}
 	}
+
 	return filelist
 }
