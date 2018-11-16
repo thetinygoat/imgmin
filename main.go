@@ -15,6 +15,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -23,7 +24,6 @@ import (
 )
 
 func main() {
-	c := make(chan int)
 	dir := getPwd()
 	imgList := genFileSlice(dir)
 	willProceed := verifyImg(imgList)
@@ -34,16 +34,16 @@ func main() {
 			fileExt := filepath.Ext(f)
 			switch fileExt {
 			case ".jpg", ".jpeg":
-				go minifyJpeg(50, f, dir, c)
-				<-c
+				minifyJpeg(50, f, dir)
 
 			case ".png":
-				go minifyPng(50, f, dir, c)
-				<-c
+				minifyPng(50, f, dir)
 			}
 
 		}
 	}
+
+	parseJSON()
 }
 
 func getPwd() string {
@@ -99,4 +99,27 @@ func verifyImg(fs []string) bool {
 		}
 	}
 	return true
+}
+
+// Config struct
+type Config struct {
+	Type        string
+	Compression int
+}
+
+func parseJSON() {
+	f, err := os.Open("config.json")
+
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	bv, _ := ioutil.ReadAll(f)
+
+	var conf []Config
+
+	json.Unmarshal([]byte(bv), &conf)
+
+	fmt.Println(conf)
+
 }
