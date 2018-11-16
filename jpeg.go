@@ -21,43 +21,21 @@ import (
 	"path"
 )
 
-func minifyJpeg(q int, f string, pwd string) {
-	decodeAndCompressJpg(q, f, pwd)
-}
-
 func decodeAndCompressJpg(q int, f string, pwd string) {
 	imgFile, err := os.Open(f)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	check(err)
 	img, err := jpeg.Decode(imgFile)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	check(err)
 
 	imgC, err := os.Create(path.Join(pwd, "dist", f))
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	check(err)
 	err = jpeg.Encode(imgC, img, &jpeg.Options{Quality: q})
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	check(err)
 
 	err = imgC.Close()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	check(err)
 
 	err = imgFile.Close()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	check(err)
 	fmt.Println("successfully compressed", f)
 }

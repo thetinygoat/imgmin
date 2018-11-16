@@ -22,44 +22,22 @@ import (
 	"path"
 )
 
-func minifyPng(q int, f string, pwd string) {
-	decodeAndCompressPng(q, f, pwd)
-}
-
 func decodeAndCompressPng(q int, f string, pwd string) {
 	imgFile, err := os.Open(f)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	check(err)
 	img, err := png.Decode(imgFile)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	check(err)
 
 	imgC, err := os.Create(path.Join(pwd, "dist", f))
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	check(err)
 	enc := png.Encoder{CompressionLevel: -2}
 	err = enc.Encode(imgC, img)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	check(err)
 
 	err = imgC.Close()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	check(err)
 
 	err = imgFile.Close()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	check(err)
 	fmt.Println("successfully compressed", f)
 }
