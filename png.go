@@ -14,3 +14,57 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 package main
+
+import (
+	"fmt"
+	"image/png"
+	"os"
+	"path"
+)
+
+func minifyPng(q int, f string, pwd string, ch chan int) {
+	c := make(chan string)
+	go decodeAndCompressPng(q, f, pwd, c)
+	res := <-c
+	fmt.Println(res)
+	ch <- 1
+}
+
+func decodeAndCompressPng(q int, f string, pwd string, c chan string) {
+	imgFile, err := os.Open(f)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	img, err := png.Decode(imgFile)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	imgC, err := os.Create(path.Join(pwd, "dist", f))
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	enc := png.Encoder{CompressionLevel: -2}
+	err = enc.Encode(imgC, img)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	err = imgC.Close()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	err = imgFile.Close()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	res := "successfully compressed " + f
+	c <- res
+}
