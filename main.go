@@ -18,15 +18,31 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 )
 
 func main() {
+	c := make(chan int)
 	dir := getPwd()
-	jpegList, _ := genFileSlice(dir)
-	willProceed := verifyJpeg(jpegList)
+	imgList := genFileSlice(dir)
+	willProceed := verifyImg(imgList)
 	if willProceed {
-		minifyJpeg(50, jpegList, dir)
+		os.Mkdir(path.Join(dir, "dist"), 0700)
+		for _, f := range imgList {
+
+			fileExt := filepath.Ext(f)
+			switch fileExt {
+			case ".jpg", ".jpeg":
+				go minifyJpeg(50, f, dir, c)
+				<-c
+
+			case ".png":
+				go minifyPng(50, f, dir, c)
+				<-c
+			}
+
+		}
 	}
 }
 
@@ -40,26 +56,47 @@ func getPwd() string {
 	return pwd
 }
 
-func genFileSlice(d string) ([]string, []string) {
+func genFileSlice(d string) []string {
 	files, err := ioutil.ReadDir(d)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	var jpegSlice []string
-	var pngSlice []string
+	var imgSlice []string
 
 	for _, f := range files {
 
 		fileExt := filepath.Ext(f.Name())
 		switch fileExt {
-		case ".jpg", ".jpeg":
-			jpegSlice = append(jpegSlice, f.Name())
-		case ".png":
-			pngSlice = append(pngSlice, f.Name())
+		case ".jpg", ".jpeg", ".png":
+			imgSlice = append(imgSlice, f.Name())
+		}
+
+	}
+	return imgSlice
+}
+
+func verifyImg(fs []string) bool {
+	for _, file := range fs {
+		imgfile, err := os.Open(file)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		defer imgfile.Close()
+		contentType, err := getFileContentType(imgfile)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		switch contentType {
+		case "image/jpeg", "image/png":
+			fmt.Println("verified mime type of", file, "as", contentType)
+		default:
+			fmt.Println("invalid format ", contentType, " of file ", file)
+			os.Exit(1)
 		}
 	}
-
-	return jpegSlice, pngSlice
+	return true
 }
