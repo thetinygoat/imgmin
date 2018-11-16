@@ -21,15 +21,11 @@ import (
 	"path"
 )
 
-func minifyJpeg(q int, f string, pwd string, ch chan int) {
-	c := make(chan string)
-	go decodeAndCompressJpg(q, f, pwd, c)
-	res := <-c
-	fmt.Println(res)
-	ch <- 1
+func minifyJpeg(q int, f string, pwd string) {
+	decodeAndCompressJpg(q, f, pwd)
 }
 
-func decodeAndCompressJpg(q int, f string, pwd string, c chan string) {
+func decodeAndCompressJpg(q int, f string, pwd string) {
 	imgFile, err := os.Open(f)
 	if err != nil {
 		fmt.Println(err)
@@ -63,6 +59,5 @@ func decodeAndCompressJpg(q int, f string, pwd string, c chan string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	res := "successfully compressed " + f
-	c <- res
+	fmt.Println("successfully compressed", f)
 }
