@@ -17,9 +17,9 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 )
 
 // Config file struct
@@ -28,6 +28,7 @@ type Config struct {
 	Compression int
 }
 
+// config file skeleton
 const configJSON = `[
     {
         "type": "jpg",
@@ -39,16 +40,23 @@ const configJSON = `[
     }
 ]`
 
-func createConfigFile() {
-	f, err := os.Create("config.json")
+// generate config file paths
+var home = os.Getenv("HOME")
+var configDirPath = path.Join(home, ".config", "gomin")
+var configFilePath = path.Join(configDirPath, "config.json")
+
+// create config file and write skeleton to it
+func createConfigFile(p string) {
+	f, err := os.Create(p)
 	check(err)
 	defer f.Close()
 	f.Write([]byte(configJSON))
 	f.Sync()
 }
 
-func parseConfigFile() []Config {
-	f, err := os.Open("config.json")
+// parse config file and create a struct from it
+func parseConfigFile(p string) []Config {
+	f, err := os.Open(p)
 	check(err)
 	defer f.Close()
 	fileSlice, err := ioutil.ReadAll(f)
@@ -60,21 +68,13 @@ func parseConfigFile() []Config {
 	return config
 }
 
-func configFileExists(name string) (bool, error) {
-	_, err := os.Stat(name)
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-	return err != nil, err
-}
+// init config everytime the program is run
+func initConfig() []Config {
 
-func initConfig(f string) []Config {
-
-	if b, _ := configFileExists(f); !b {
-		fmt.Println("does not")
-		createConfigFile()
+	if _, err := os.Open(configFilePath); os.IsNotExist(err) {
+		os.Mkdir(configDirPath, 0700)
+		createConfigFile(configFilePath)
 	}
-	fmt.Println("already exists")
-	config := parseConfigFile()
+	config := parseConfigFile(configFilePath)
 	return config
 }
