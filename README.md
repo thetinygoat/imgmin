@@ -7,9 +7,11 @@ Gomin is cli utility to minify and optimize images for the web.
 
 To install this tool you must have go installed. Detailed information about installing go can be found [here](https://golang.org/doc/install)
 
-After installing go, clone this repository and `cd` into the cloned directory.
-
 Make sure that `$GOPATH` is set by running `go env`.
+
+`cd` into `$GOPATH` and create a `src` directory and `cd` into it.
+
+clone this repository and `cd` into the cloned directory.
 
 after that run `go install` to install the binary in the `$GOPATH/bin` directory.
 
