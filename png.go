@@ -22,7 +22,8 @@ import (
 	"path"
 )
 
-func decodeAndCompressPng(q int, f string, pwd string) {
+// decode and compress png file
+func decodeAndCompressPng(q png.CompressionLevel, f string, pwd string) {
 	imgFile, err := os.Open(f)
 	check(err)
 	img, err := png.Decode(imgFile)
@@ -30,7 +31,7 @@ func decodeAndCompressPng(q int, f string, pwd string) {
 
 	imgC, err := os.Create(path.Join(pwd, "dist", f))
 	check(err)
-	enc := png.Encoder{CompressionLevel: -2}
+	enc := png.Encoder{CompressionLevel: q}
 	err = enc.Encode(imgC, img)
 	check(err)
 

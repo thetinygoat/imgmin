@@ -21,6 +21,7 @@ import (
 	"path"
 )
 
+// decode and compress jpeg file
 func decodeAndCompressJpg(q int, f string, pwd string) {
 	imgFile, err := os.Open(f)
 	check(err)
