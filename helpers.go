@@ -16,6 +16,7 @@ package main
 
 import (
 	"fmt"
+	"image/png"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -23,12 +24,14 @@ import (
 	"path/filepath"
 )
 
+// error check helper
 func check(e error) {
 	if e != nil {
 		panic(e)
 	}
 }
 
+// pwd helper
 func getPwd() string {
 	pwd, err := os.Getwd()
 	check(err)
@@ -36,6 +39,7 @@ func getPwd() string {
 	return pwd
 }
 
+// file list generator
 func getFileList(d string) []string {
 	files, err := ioutil.ReadDir(d)
 	check(err)
@@ -54,6 +58,7 @@ func getFileList(d string) []string {
 	return imgSlice
 }
 
+// file mime type verificaton helper
 func getFileType(f *os.File) string {
 	buffer := make([]byte, 512)
 	_, err := f.Read(buffer)
@@ -63,7 +68,8 @@ func getFileType(f *os.File) string {
 	return contentType
 }
 
-func proceedToCompression(b bool, l []string) {
+// compression helper
+func proceedToCompression(b bool, l []string, c []Config) {
 	pwd := getPwd()
 	if b {
 		os.Mkdir(path.Join(pwd, "dist"), 0700)
@@ -72,16 +78,17 @@ func proceedToCompression(b bool, l []string) {
 			fileExt := filepath.Ext(f)
 			switch fileExt {
 			case ".jpg", ".jpeg":
-				decodeAndCompressJpg(50, f, pwd)
+				decodeAndCompressJpg(c[0].Compression, f, pwd)
 
 			case ".png":
-				decodeAndCompressPng(50, f, pwd)
+				decodeAndCompressPng(png.CompressionLevel(c[1].Compression), f, pwd)
 			}
 
 		}
 	}
 }
 
+// verify mime type
 func verifyImg(l []string) bool {
 	for _, file := range l {
 		imgfile, err := os.Open(file)
@@ -98,4 +105,12 @@ func verifyImg(l []string) bool {
 	}
 
 	return true
+}
+
+// check for empty file list
+func checkEmptyList(l []string) {
+	if len(l) == 0 {
+		fmt.Println("No image file(s) found in this directory!")
+		os.Exit(1)
+	}
 }
