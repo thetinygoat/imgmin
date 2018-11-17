@@ -9,13 +9,11 @@ To install this tool you must have go installed. Detailed information about inst
 
 Make sure that `$GOPATH` is set by running `go env`.
 
-`cd` into `$GOPATH` and create a `src` directory and `cd` into it.
+after that run the following command to install the package:
 
-clone this repository and `cd` into the cloned directory.
+`go get -v github.com/thetinygoat/gomin`
 
-after that run `go install` to install the binary in the `$GOPATH/bin` directory.
-
-add the `$GOPATH/bin` to your `$PATH` and you are all set.
+add the `$GOPATH/bin` direcotry to your `$PATH` and you are good to go.
 
 ## Usage
 
