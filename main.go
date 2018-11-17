@@ -14,17 +14,17 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 package main
 
-import (
-	"os"
-)
-
 func main() {
-	// dir := getPwd()
-	// imgList := getFileList(dir)
-	// willProceed := verifyImg(imgList)
-	// proceedToCompression(willProceed, imgList)
-	// createConfigFile()
-	configFilePath, err := os.Getwd()
-	check(err)
-	initConfig(configFilePath)
+	// init config
+	config := initConfig()
+	// get pwd
+	dir := getPwd()
+	// create a list of img file in the current directory
+	imgList := getFileList(dir)
+	// check if file list is empty
+	checkEmptyList(imgList)
+	// proceed to mime type verification
+	willProceed := verifyImg(imgList)
+	// proceed to compression
+	proceedToCompression(willProceed, imgList, config)
 }
