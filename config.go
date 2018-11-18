@@ -42,7 +42,7 @@ const configJSON = `[
 
 // generate config file paths
 var home = os.Getenv("HOME")
-var configDirPath = path.Join(home, ".config", "gomin")
+var configDirPath = path.Join(home, ".config", "imgmin")
 var configFilePath = path.Join(configDirPath, "config.json")
 
 // create config file and write skeleton to it

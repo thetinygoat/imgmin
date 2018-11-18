@@ -1,6 +1,6 @@
 # About
 
-Gomin is cli utility to minify and optimize images for the web.
+Imgmin is cli utility to minify and optimize images for the web.
 
 
 ## How to install 
@@ -11,17 +11,17 @@ Make sure that `$GOPATH` is set by running `go env`.
 
 after that run the following command to install the package:
 
-`go get -v github.com/thetinygoat/gomin`
+`go get -v github.com/thetinygoat/imgmin`
 
 add the `$GOPATH/bin` directory to your `$PATH` and you are good to go.
 
 ## Usage
 
-To use gomin simply cd into the folder containing images and run `$ gomin` and bam! its done.
+To use imgmin simply cd into the folder containing images and run `$ imgmin` and bam! its done.
 
 ## Config
 
-the config file can be found in `~/.config/gomin/config.json`.
+the config file can be found in `~/.config/imgmin/config.json`.
 
 it is a simple json file and can be edited to specify the quality of compression.
 
@@ -51,11 +51,7 @@ it is a simple json file and can be edited to specify the quality of compression
 
 ```
 
-values can bes set according to needs.
-
-## Screenshots
-
-![Imgur](https://i.imgur.com/AnLwbsm.png)
+values can be set according to needs.
 
 
 
